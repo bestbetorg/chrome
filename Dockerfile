@@ -37,6 +37,9 @@ RUN apt-key add /tmp/linux_signing_key.pub \
 	&& apt-get install -y --no-install-recommends \
         /tmp/google-chrome-stable_current_amd64.deb
 
+RUN wget https://deb.nodesource.com/setup_12.x -qO- | bash
+RUN apt-get install -y --no-install-recommends nodejs
+
 RUN apt-get clean \
 	&& rm -rf /var/cache/* /var/log/apt/* /var/lib/apt/lists/* /tmp/* \
         && useradd -m chrome \
