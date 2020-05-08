@@ -1,30 +1,45 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+ENV LANG='en_GB.UTF-8' LANGUAGE='en_GB:en' LC_ALL='en_GB.UTF-8'
+ENV TZ Europe/London
 
 ENV VNC_SCREEN_SIZE 1366x768
 
 COPY copyables /
 
+RUN echo $TZ > /etc/timezone
+
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
-        xvfb \
+        locales \
+        tzdata \
 	gnupg2 \
-	fonts-noto-cjk \
-	pulseaudio \
+        fonts-noto-cjk \
 	supervisor \
+        xvfb \
 	x11vnc \
 	fluxbox \
 	eterm
+
+RUN echo en_GB.UTF-8 UTF-8 >> /etc/locale.gen && locale-gen
+
+RUN rm /etc/localtime && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
 
 ADD https://dl.google.com/linux/linux_signing_key.pub \
 	https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
 	/tmp/
 
 RUN apt-key add /tmp/linux_signing_key.pub \
-	&& apt-get install -y /tmp/google-chrome-stable_current_amd64.deb
+	&& apt-get install -y --no-install-recommends \
+        /tmp/google-chrome-stable_current_amd64.deb
 
 RUN apt-get clean \
 	&& rm -rf /var/cache/* /var/log/apt/* /var/lib/apt/lists/* /tmp/* \
-	&& useradd -m -G pulse-access chrome \
+        && useradd -m chrome \
 	&& usermod -s /bin/bash chrome \
         && mkdir -p /home/chrome/.config \
 	&& mkdir -p /home/chrome/.fluxbox \
@@ -43,4 +58,4 @@ EXPOSE 5900
 
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/usr/bin/supervisord"]
