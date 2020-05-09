@@ -1,0 +1,6 @@
+[program:chrome]
+environment=HOME="/home/chrome",DISPLAY=":0",USER="chrome"
+command=/opt/google/chrome/chrome --window-size=%(ENV_CHROME_WINDOW_SIZE)s %(ENV_CHROME_OPTS)s
+user=chrome
+autorestart=true
+priority=200

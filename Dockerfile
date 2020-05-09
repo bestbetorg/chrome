@@ -61,4 +61,4 @@ EXPOSE 5900
 
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
 
-CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord", "-n"]
