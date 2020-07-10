@@ -2,8 +2,8 @@ FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV LANG='en_GB.UTF-8' LANGUAGE='en_GB:en' LC_ALL='en_GB.UTF-8'
-ENV TZ Europe/London
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+ENV TZ Asia/Taipei
 
 ENV VNC_SCREEN_SIZE 1366x768
 
@@ -23,19 +23,19 @@ RUN apt-get update \
 	fluxbox \
 	eterm
 
-RUN echo en_GB.UTF-8 UTF-8 >> /etc/locale.gen && locale-gen
+RUN echo en_US.UTF-8 UTF-8 >> /etc/locale.gen && locale-gen
 
 RUN rm /etc/localtime && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     dpkg-reconfigure -f noninteractive tzdata
 
 ADD https://dl.google.com/linux/linux_signing_key.pub \
-	https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+        http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_81.0.4044.138-1_amd64.deb \
 	/tmp/
 
 RUN apt-key add /tmp/linux_signing_key.pub \
 	&& apt-get install -y --no-install-recommends \
-        /tmp/google-chrome-stable_current_amd64.deb
+        /tmp/google-chrome-stable_81.0.4044.138-1_amd64.deb
 
 RUN wget https://deb.nodesource.com/setup_12.x -qO- | bash
 RUN apt-get install -y --no-install-recommends nodejs
